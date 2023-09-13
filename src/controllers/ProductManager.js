@@ -20,41 +20,61 @@ class ProductManager {
 
     }
 
+    inStock = async (pid) => {
+
+        let productos = await this.leerProducto();
+       return productos.find(prod => prod.pid === pid)
+    }
+
     agregarProducto = async (producto) => {
         let productoEnCatalogo = await this.leerProducto()
-        producto.id = nanoid()
+        producto.pid = nanoid()
         let catalogo = [...productoEnCatalogo, producto]
         await this.editarPoducto(catalogo);
         return "Producto Agregado"
     }
 
-    borrarProducto = async (id) => {
+
+    borrarProducto = async (pid) => {
         let productos = await this.leerProducto()
-        let productoExistente = productos.some(prod => prod.id === id)
+        let productoExistente = productos.some(prod => prod.pid === pid)
 
         if (productoExistente) {
-            let filtrar = productos.filter(prod => prod.id != id)
+            let filtrar = productos.filter(prod => prod.pid != pid)
             await this.editarPoducto(filtrar)
-            return "Haz Eliminado"
+            return "Haz Eliminado El Producto Seleccionado"
         }
         return "El producto no existe"
     }
 
 
-    getProducts = async () => {
+    obtenerProductos = async () => {
         return await this.leerProducto()
 
 
     }
-    buscarPorID = async (id) => {
-        let productos = await this.leerProducto();
-        let productoPorID = productos.find(prod => prod.id === id)
+    buscarPorID = async (pid) => {
+        
+        let productoPorID = await this.inStock(pid)
         if (!productoPorID) return "Producto no encontrado."
         return productoPorID
 
 
 
     }
+    
+    actualizarProducto = async (pid, producto)=>{
+        let productoPorID = await this.inStock(pid)
+        if(!productoPorID)return "Producto No Encontrado!!!"
+        await this.borrarProducto(pid)
+        let productoEnCatalogo = await this.leerProducto()
+        let productos = [{...producto, pid : pid}, ...productoEnCatalogo]
+        await this.editarPoducto(productos)
+        return "Producto Actualizado Correctamente! "
+      
+        }
+
+    
 
 }
 export default ProductManager
