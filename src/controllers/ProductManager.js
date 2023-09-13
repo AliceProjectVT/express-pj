@@ -35,7 +35,7 @@ class ProductManager {
         if (productoExistente) {
             let filtrar = productos.filter(prod => prod.id != id)
             await this.editarPoducto(filtrar)
-            return "Producto Eliminado"
+            return "Haz Eliminado"
         }
         return "El producto no existe"
     }
